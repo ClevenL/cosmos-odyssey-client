@@ -8,6 +8,7 @@ const state = {
     selectedDeparture: '',
     selectedRoute: {},
     selectedProviders: [],
+    reservationState: false,
 }
 
 // Search options for fuse.js
@@ -31,8 +32,11 @@ const getters = {
     selectedRoute: (state) => {
         return state.selectedRoute
     },
-    providers: (state) => {
-
+    reservationState: (state) => {
+        return state.reservationState
+    },
+    selectedProviders: (state) => {
+        return state.selectedProviders
     },
     departures: (state, getters) => {
         let legs = getters.latestPriceList.legs
@@ -78,6 +82,12 @@ const actions = {
     updateSelectedProviders ({ commit }, data) {
         commit('UPDATE_SELECTED_PROVIDERS', data)
     },
+    clearSelectedProviders ({ commit }) {
+        commit('CLEAR_SELECTED_PROVIDERS')
+    },
+    updateReservationState ({ commit }, data) {
+        commit('UPDATE_RESERVATION_STATE', data)
+    },
     
 }
 
@@ -96,7 +106,13 @@ const mutations = {
         state.selectedRoute = data
     },
     UPDATE_SELECTED_PROVIDERS (state, data) {
-        state.selectedProviders = data
+        state.selectedProviders.push(data)
+    },
+    CLEAR_SELECTED_PROVIDERS (state, data) {
+        state.selectedProviders = []
+    },
+    UPDATE_RESERVATION_STATE (state, data) {
+        state.reservationState = data
     },
 }
 

@@ -5,6 +5,7 @@
     <div 
     v-for="(provider) in selectedRoute.providers"
     :key="provider.id"
+    @click="selectProvider(provider)"
     class="my-2 mx-auto p-4 rounded-lg shadow-lg bg-gray-800 hover:bg-gray-900">
       <div class="flex justify-between">
         <h1 class="text-2xl font-bold text-white">{{ provider.company.name }}</h1>
@@ -15,6 +16,21 @@
         <p class="mt-2 text-sm text-gray-400">Arriving:  {{ formatDate(provider.flightEnd) }}</p>
         <h1 class="text-2xl font-bold text-white">{{ formatPrice(provider.price) }}</h1>
       </div>
+      <div v-if="providerSelected(provider)"
+      class="flex justify-between mt-4">
+        <div class="w-full">
+          <div 
+          @click="updateSelectedProvidersData(provider,true)"
+          class="text-center text-xl font-bold text-gray-100 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md shadow">
+          Make a reservation</div>
+        </div>
+        <div class="w-full">
+          <div 
+          @click="updateSelectedProvidersData(provider)"
+          class="text-center text-xl font-bold text-gray-100 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md">
+          Add as a stop</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -23,6 +39,11 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: "ProvidersList",
+  data() {
+    return {
+      selectedProvider: {},
+    };
+  },
   computed: {
     ...mapGetters([
       'selectedRoute',
@@ -33,11 +54,24 @@ export default {
       'updateSelectedDeparture',
       'updateSelectedRoute',
       'updateSelectedProviders',
+      'updateReservationState',
     ]),
-    updateSelectedProviderData (provider) {
+    updateSelectedProvidersData (provider, reservation = false) {
+      if (reservation) {
+        this.updateSelectedDeparture('')
+        this.updateReservationState(true)
+      } else {
+        this.updateSelectedDeparture(this.selectedRoute.routeInfo.to.name)
+      }
+      provider["routeInfo"] = this.selectedRoute.routeInfo
       this.updateSelectedProviders(provider)
-      this.updateSelectedDeparture(this.updateSelectedRoute.routeInfo.to.name)
       this.updateSelectedRoute({})
+    },
+    selectProvider (provider) {
+      this.selectedProvider = provider
+    },
+    providerSelected (provider) {
+      return provider == this.selectedProvider
     },
     formatDate (date) {
       const formatter = new Intl.DateTimeFormat('en-US', {
