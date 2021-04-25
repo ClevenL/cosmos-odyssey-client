@@ -1,7 +1,7 @@
 <template>
   <div class="p-10 min-h-screen bg-gray-900">
     <div v-if="priceListDataLoaded" class="max-w-3xl px-8 py-4 mx-auto rounded-lg shadow-md bg-gray-700">
-      <h1 class="text-4xl my-8 text-center font-bold text-gray-50">Cosmos Odyssey</h1>
+      <h1 class="text-4xl my-8 text-center font-bold text-gray-50">Cosmos Odyssey&#128640;</h1>
       <h1 class="text-xl text-center text-gray-100">Make a reservation for your next space travel today!</h1>
       
       <departure-selection v-if="!selectedProviders.length" />

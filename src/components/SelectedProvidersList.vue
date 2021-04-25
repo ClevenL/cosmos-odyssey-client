@@ -17,14 +17,20 @@
         </div>
       </div>
     </div>
-    <div class="mt-10 flex justify-between">
-      <div 
-          @click="clearReservationState()"
-          class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-          Clear selections</div>
-      <div class="inline-block align-bottom text-xl text-right text-gray-100">Total Price</div>
-    </div>
+    <div class="text-xl mt-6 text-right text-gray-100">Total Price</div>
     <div class="text-2xl font-bold text-right text-gray-100">{{ formatPrice(getTotalPrice()) }}</div>
+    <div class="flex justify-start">
+      <div 
+        @click="clearReservationState()"
+        class="cursor-pointer px-6 py-2 mr-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+        Clear selections</div>
+      <div 
+        v-if="!reservationState"
+        @click="makeReservation()"
+        class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+        Make a reservation</div>
+    </div>
+    
   </div>
 </template>
 <script>
@@ -35,12 +41,16 @@ export default {
   computed: {
     ...mapGetters([
       'selectedProviders',
+      'reservationState',
+      'selectedRoute',
     ]),
   },
   methods: {
     ...mapActions([
       'clearSelectedProviders',
       'updateReservationState',
+      'updateSelectedDeparture',
+      'updateSelectedRoute',
     ]),
     formatDate (date) {
       const formatter = new Intl.DateTimeFormat('en-US', {
@@ -55,6 +65,11 @@ export default {
         currency: 'USD',
       })
       return formatter.format(price)
+    },
+    makeReservation () {
+      this.updateSelectedDeparture('')
+      this.updateReservationState(true)
+      this.updateSelectedRoute({})
     },
     getFlightDurationString (provider) {
       const durationInMs = new Date(provider.flightEnd).valueOf() - new Date(provider.flightStart).valueOf()

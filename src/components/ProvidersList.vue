@@ -2,47 +2,52 @@
   <div class="my-10">
     <h2 class="mb-4 text-xl text-center text-gray-100">Traveling from <strong class="text-2xl">{{ selectedRoute.routeInfo.from.name }}</strong> to <strong class="text-2xl">{{ selectedRoute.routeInfo.to.name }}</strong></h2>
     <p class="mt-2 text-md text-center text-gray-400">Check your options:</p>
-    <div class="flex justify-end">
-      <div class="flex">
-        <div 
-        @click="handleSorting('Duration')"
-        class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-          Duration
+    <div v-if="filteredProviders.length">
+      <div class="flex justify-end">
+        <div class="flex">
+          <div 
+          @click="handleSorting('Duration')"
+          class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+            Duration
+          </div>
+          <div 
+          @click="handleSorting('Price')"
+          class="cursor-pointer ml-2 px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+            Price
+          </div>
         </div>
-        <div 
-        @click="handleSorting('Price')"
-        class="cursor-pointer ml-2 px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-          Price
+      </div>
+      <div 
+      v-for="(provider) in filteredProviders"
+      :key="provider.id"
+      @click="selectProvider(provider)"
+      class="my-2 mx-auto p-4 rounded-lg shadow-lg hover:bg-gray-900"
+      :class="[ providerSelected(provider)? 'bg-gray-900' : 'bg-gray-800' ]">
+        <div class="flex justify-between">
+          <h1 class="text-2xl font-bold text-white">{{ provider.company.name }}</h1>
+          <h1 class="text-md text-white">Duration: <strong>{{ getFlightDurationString(provider) }}</strong></h1>
+        </div>
+        <p class="mt-2 text-sm text-gray-400">Departing: {{ formatDate(provider.flightStart) }}</p>
+        <div class="flex justify-between">
+          <p class="mt-2 text-sm text-gray-400">Arriving:  {{ formatDate(provider.flightEnd) }}</p>
+          <h1 class="text-2xl font-bold text-white">{{ formatPrice(provider.price) }}</h1>
+        </div>
+        <div v-if="providerSelected(provider)"
+        class="flex justify-between mt-4">
+          <div 
+          @click="updateSelectedProvidersData(provider,true)"
+          class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+          Make a reservation</div>
+
+          <div 
+          @click="updateSelectedProvidersData(provider)"
+          class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
+          Add as a stop</div>
         </div>
       </div>
     </div>
-    <div 
-    v-for="(provider) in filteredProviders"
-    :key="provider.id"
-    @click="selectProvider(provider)"
-    class="my-2 mx-auto p-4 rounded-lg shadow-lg hover:bg-gray-900"
-    :class="[ providerSelected(provider)? 'bg-gray-900' : 'bg-gray-800' ]">
-      <div class="flex justify-between">
-        <h1 class="text-2xl font-bold text-white">{{ provider.company.name }}</h1>
-        <h1 class="text-md text-white">Duration: <strong>{{ getFlightDurationString(provider) }}</strong></h1>
-      </div>
-      <p class="mt-2 text-sm text-gray-400">Departing: {{ formatDate(provider.flightStart) }}</p>
-      <div class="flex justify-between">
-        <p class="mt-2 text-sm text-gray-400">Arriving:  {{ formatDate(provider.flightEnd) }}</p>
-        <h1 class="text-2xl font-bold text-white">{{ formatPrice(provider.price) }}</h1>
-      </div>
-      <div v-if="providerSelected(provider)"
-      class="flex justify-between mt-4">
-        <div 
-        @click="updateSelectedProvidersData(provider,true)"
-        class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-        Make a reservation</div>
-
-        <div 
-        @click="updateSelectedProvidersData(provider)"
-        class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-        Add as a stop</div>
-      </div>
+    <div v-else>
+      <p class="mt-6 font-bold text-center text-white">There is no flight offers after your arrival date.</p>
     </div>
   </div>
 </template>
