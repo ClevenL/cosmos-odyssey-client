@@ -20,7 +20,7 @@
     <div class="mt-10 flex justify-between">
       <div 
           @click="clearReservationState()"
-          class="py-2 px-4 text-center text-xl font-bold text-gray-100 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md shadow">
+          class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
           Clear selections</div>
       <div class="inline-block align-bottom text-xl text-right text-gray-100">Total Price</div>
     </div>

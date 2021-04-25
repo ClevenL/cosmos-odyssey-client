@@ -8,6 +8,8 @@ const state = {
     selectedDeparture: '',
     selectedRoute: {},
     selectedProviders: [],
+    selectedCompanies: [],
+    sortBy: 'duration',
     reservationState: false,
 }
 
@@ -37,6 +39,27 @@ const getters = {
     },
     selectedProviders: (state) => {
         return state.selectedProviders
+    },
+    // Get flights that will depart later than the last flight has ended so you can make it to the next flight
+    availableProviders: (state) => {
+        if (state.selectedProviders.length) {
+            const lastFlightEnd = new Date(state.selectedProviders[state.selectedProviders.length - 1].flightEnd).valueOf()
+            return state.selectedRoute.providers.filter(provider => new Date(provider.flightStart).valueOf() > lastFlightEnd)
+        } else {
+            return state.selectedRoute.providers
+        }
+    },
+    // Get flights that are sorted
+    filteredProviders: (state, getters) => {
+        if (state.sortBy == 'duration') return getters.availableProviders.sort((providerA, providerB) => {
+                const durationA = new Date(providerA.flightEnd) - new Date(providerA.flightStart)
+                const durationB = new Date(providerB.flightEnd) - new Date(providerB.flightStart)
+                return durationA - durationB
+            })
+        if (state.sortBy == 'price') return getters.availableProviders.sort((providerA, providerB) => {
+                return providerA.price - providerB.price
+            })
+        return getters.availableProviders
     },
     departures: (state, getters) => {
         let legs = getters.latestPriceList.legs
@@ -88,6 +111,9 @@ const actions = {
     updateReservationState ({ commit }, data) {
         commit('UPDATE_RESERVATION_STATE', data)
     },
+    updateSortBy ({ commit }, data) {
+        commit('UPDATE_SORT_BY', data)
+    },
     
 }
 
@@ -113,6 +139,9 @@ const mutations = {
     },
     UPDATE_RESERVATION_STATE (state, data) {
         state.reservationState = data
+    },
+    UPDATE_SORT_BY (state, data) {
+        state.sortBy = data
     },
 }
 

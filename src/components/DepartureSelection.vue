@@ -9,15 +9,16 @@
           <input 
             v-model="search"
             @keyup="updateSearchData"
+            @click="updateShowDepartureList(true)"
             class="w-full py-3 pl-10 pr-4 border rounded-md bg-gray-800 text-gray-300 border-gray-600 focus:border-blue-500 focus:outline-none focus:ring" 
             placeholder="Departure Planet">
         </div>
-        <div v-if="search.length"
+        <div v-if="search.length || showDepartureList"
           class="bg-gray-700 absolute inset-x-0 mx-5 my-3 overflow-y-auto border rounded-md max-h-100">
           <div 
             v-for="(departure) in departures" 
             :key="departure._id"
-            @click="updateSelectedDepartureData(departure)" 
+            @click="updateSelectedDepartureData(departure); updateShowDepartureList(false)"
             class="bg-gray-800 transition-colors duration-150 hover:bg-gray-900">
             <h3 class="px-4 py-2 border-gray-600 font-medium border text-gray-100">{{ departure }}</h3>
           </div>
@@ -37,6 +38,7 @@ export default {
   data() {
     return {
       search: '',
+      showDepartureList: false,
     };
   },
   computed: {
@@ -53,6 +55,9 @@ export default {
     ]),
     updateSearchData () {
       this.updateSearch(this.search)
+    },
+    updateShowDepartureList (bool) {
+      this.showDepartureList = bool
     },
     updateSelectedDepartureData (departure) {
       this.search = ''

@@ -14,6 +14,8 @@
 
       <providers-list v-if="Object.entries(selectedRoute).length" />
 
+      <success-alert v-if="reservationSuccess" />
+      <data-update-alert v-if="dataUpdateSuccess" />
     </div> 
   </div>
 </template>
@@ -25,6 +27,9 @@ import DestinationsList from './components/DestinationsList.vue'
 import DepartureSelection from './components/DepartureSelection.vue'
 import SelectedProvidersList from './components/SelectedProvidersList.vue'
 import ReservationForm from './components/ReservationForm.vue'
+import SuccessAlert from './components/SuccessAlert.vue'
+import DataUpdateSuccessAlert from './components/DataUpdateSuccessAlert.vue'
+import api from './api/'
 
 export default {
   components: {
@@ -33,6 +38,8 @@ export default {
     "departure-selection": DepartureSelection,
     "selected-providers-list": SelectedProvidersList,
     "reservation-form": ReservationForm,
+    "success-alert": SuccessAlert,
+    "data-update-alert": DataUpdateSuccessAlert,
   },
   data() {
     return {
@@ -40,16 +47,58 @@ export default {
     };
   },
   async created() {
-    this.$store.dispatch('loadPriceLists')
+    await this.$store.dispatch('loadPriceLists')
+    this.refreshData()
   },
   computed: {
     ...mapGetters([
+      'latestPriceList',
       'priceListDataLoaded',
       'selectedDeparture',
       'selectedRoute',
       'reservationState',
       'selectedProviders',
+      'reservationSuccess',
+      'dataUpdateSuccess',
     ]),
+  },
+  methods: {
+    ...mapActions([
+      'updateReservationSuccess',
+      'updateDataUpdateSuccess',
+      'clearSelectedProviders',
+      'updateReservationState',
+      'updateSelectedRoute',
+    ]),
+    refreshData () {
+      const validTime = new Date(this.latestPriceList.validUntil).valueOf() - Date.now()
+      console.log(validTime)
+      setTimeout(() => {
+        this.$store.dispatch('loadPriceLists')
+        this.clearSelectedProviders()
+        this.updateReservationState(false)
+        this.updateReservationSuccess(false)
+        this.updateDataUpdateSuccess(true)
+        this.updateSelectedRoute({})
+        this.refreshData()
+      }, validTime)
+    },
+  },
+  watch: {
+    reservationSuccess (reservationSuccess) {
+      if (reservationSuccess) {
+        setTimeout(() => {
+          this.updateReservationSuccess(false)
+        }, 9000)
+      }
+    },
+    dataUpdateSuccess (dataUpdateSuccess) {
+      if (dataUpdateSuccess) {
+        setTimeout(() => {
+          this.updateDataUpdateSuccess(false)
+        }, 7000)
+      }
+    },
   },
 };
 

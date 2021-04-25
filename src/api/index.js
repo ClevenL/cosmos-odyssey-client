@@ -1,26 +1,16 @@
 import axios from "axios"
 
 export default {
+    async fetchPriceListFromAPI(){
+        const response = await axios.get(`https://cosmos-odyssey.azurewebsites.net/api/v1.0/TravelPrices`)
+        return response.data
+    },
     async getAllPriceLists(){
         const response = await axios.get(`api/pricelists/`)
         return response.data
     },
-    /*
-    async updateArticleRead(item, bool){
-        const response = await axios.put(`api/articles/${item._id}`, { read: bool })
+    async makeReservation(data) {
+        const response = await axios.post("api/reservations/", data)
         return response.data
     },
-    async updateArticleStar(item, bool){
-        const response = await axios.put(`api/articles/${item._id}`, { star: bool })
-        return response.data
-    },
-    async updateArticleHide(item, bool){
-        const response = await axios.put(`api/articles/${item._id}`, { hide: bool })
-        return response.data
-    },
-    async updateArticleSave(item){
-        const response = await axios.put(`api/articles/${item._id}`, item)
-        return response.data
-    },
-    */
 }
