@@ -12,9 +12,11 @@
           <input v-model.trim="lastNameInput" type="text" class="block w-full px-4 py-2 mt-2 border rounded-md bg-gray-800 text-gray-300 border-gray-600 focus:border-blue-500 focus:outline-none focus:ring">
         </div>
       </div>
+      <h2 v-if="notFilledError" class="text-xl text-center font-semibold text-red">First and Last name have to be filled</h2>
       <div class="flex justify-start mt-6">
         <div @click="submitReservation()" class="cursor-pointer px-6 py-2 font-semibold text-gray-100 transition-colors duration-200 transform bg-gray-800 shadow rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">&#128640; Make reservation</div>
       </div>
+      
     </form>
   </div>
 </template>
@@ -27,6 +29,7 @@ export default {
     return {
       firstNameInput: '',
       lastNameInput: '',
+      notFilledError: false,
     };
   },
   computed: {
@@ -43,10 +46,15 @@ export default {
       'makeReservation',
     ]),
     submitReservation () {
-      this.makeReservation({
-        firstName: this.firstNameInput, 
-        lastName: this.lastNameInput
-      })
+      if (this.firstNameInput == '' || this.lastNameInput == '') {
+        this.notFilledError = true
+      } else {
+        this.makeReservation({
+          firstName: this.firstNameInput, 
+          lastName: this.lastNameInput
+        })
+        this.notFilledError = false
+      } 
     },
     updateSelectedDepartureData (departure) {
       this.search = ''
